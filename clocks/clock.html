@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... (your CSS and other meta tags) ... -->
+</head>
+<body>
+    <div class="calculator">
+        <div class="input" id="input"></div>
+        <div class="buttons">
+            <!-- ... (your button elements) ... -->
+        </div>
+    </div>
+
+    <script>
+        "use strict";
+
+        var input = document.getElementById('input'), // input/output button
+            number = document.querySelectorAll('.numbers div'), // number buttons
+            operator = document.querySelectorAll('.operators div'), // operator buttons
+            result = document.getElementById('result'), // equal button
+            clear = document.getElementById('clear'), // clear button
+            resultDisplayed = false; // flag to keep an eye on what output is displayed
+
+        // Adding click handlers to operator buttons
+        for (var i = 0; i < operator.length; i++) {
+            operator[i].addEventListener("click", function(e) {
+                var currentString = input.innerHTML;
+                var lastChar = currentString[currentString.length - 1];
+
+                // Check if an operator was clicked and prevent adding multiple operators in a row
+                if (lastChar !== "+" && lastChar !== "-" && lastChar !== "×" && lastChar !== "÷") {
+                    input.innerHTML += e.target.innerHTML;
+                } else if (lastChar === "+" || lastChar === "-" || lastChar === "×" || lastChar === "÷") {
+                    // Replace the last operator with the clicked operator
+                    var newString = currentString.substring(0, currentString.length - 1) + e.target.innerHTML;
+                    input.innerHTML = newString;
+                }
+
+                resultDisplayed = false;
+            });
+        }
+
+        // Adding click handler to the equal button
+        result.addEventListener("click", function() {
+            var inputString = input.innerHTML;
+
+            // Use a safer method to evaluate mathematical expressions
+            try {
+                var resultValue = evaluateExpression(inputString);
+                input.innerHTML = resultValue;
+                resultDisplayed = true;
+            } catch (error) {
+                input.innerHTML = "Error";
+            }
+        });
+
+        // Adding click handler to the clear button
+        clear.addEventListener("click", function() {
+            input.innerHTML = "";
+            resultDisplayed = false;
+        });
+
+        // Evaluate a mathematical expression safely
+        function evaluateExpression(expression) {
+            return new Function('return ' + expression)();
+        }
+    </script>
+</body>
+</html>
